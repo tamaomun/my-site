@@ -1,0 +1,31 @@
+---
+interface Button {
+  text: string;
+  link: string;
+}
+
+interface Props {
+  title: string;
+  image: string;
+  description?: string;
+  buttons: Button[];
+}
+
+const { title, image, description, buttons, } = Astro.props;
+---
+
+<section>
+  <h3>{title}</h3>
+  <img src={image} alt={title} />
+  {description && <p>{description}</p>}
+{/* descriptionが存在するときだけ<p>を表示する.説明文を渡さなかった作品では何も表示されない */}
+
+  <div class="paper-buttons">
+    {buttons.map((button) => (
+      <a href={button.link} class="btn">
+        {button.text}
+      </a>
+    ))}
+  </div>
+  
+</section>

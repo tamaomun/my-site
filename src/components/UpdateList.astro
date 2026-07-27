@@ -1,0 +1,32 @@
+---
+interface Update {
+  date: string;
+  text: string;
+}
+
+interface Props {
+  updates: Update[];
+}
+
+const { updates } = Astro.props;
+---
+
+<div class="update-box">
+  <dl class="update">
+    {updates.map((update) => (
+      <>
+        <dt>{update.date}</dt>
+        <dd>{update.text}</dd>
+      </>
+    ))}
+  </dl>
+</div>
+
+<style>
+  .update-box {
+    width: 70%;
+    height: 180px;
+    overflow-y: scroll;
+    border: 1px solid #ffffff;
+  }
+</style>

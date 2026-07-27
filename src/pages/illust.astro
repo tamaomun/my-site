@@ -1,0 +1,44 @@
+---
+import Layout from "../layouts/Layout.astro";
+import IllustItem from "../components/IllustItem.astro";
+ import {
+   onePictures,
+   mangaPictures,
+ } from "../data/illusts";
+---
+
+<Layout title="ILLUST | 深夜チキンライス・ガイド">
+  <div class="container">
+    <section>
+      <div class="illust-heading">
+        <img src="/img/illust.png" alt="ILLUST" />
+      </div>
+
+      <section>
+
+        <h3>一枚絵</h3>
+
+         <ul class="illust">
+           {onePictures.map((picture) => (
+           <IllustItem
+            image={picture.image}
+            caption={picture.caption}
+             />
+           ))}
+         </ul>
+
+        <h3>漫画関連</h3>
+
+         <ul class="illust">
+           {mangaPictures.map((picture) => (
+             <IllustItem
+              image={picture.image}
+              caption={picture.caption}
+              />
+            ))}
+           </ul>
+
+      </section>
+    </section>
+  </div>
+</Layout>

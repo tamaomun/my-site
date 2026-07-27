@@ -1,0 +1,19 @@
+---
+interface Props {
+  image: string;
+  caption: string;
+}
+
+const { image, caption } = Astro.props;
+---
+
+<li>
+  <a
+    href={image}
+    data-fimg="sweets"
+    class="fuwaimg"
+    data-fcaption={caption}
+  >
+    <img src={image} alt={caption} />
+  </a>
+</li>
