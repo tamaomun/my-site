@@ -7,29 +7,64 @@ import { updates } from "../data/updates";
 <Layout title="深夜チキンライス・ガイド">
   
     <div class="container">
-      <img
-        class="top-image"
-        src="/img/top-index.jpg"
-        alt="トップイラスト"
-      />
+      <img　class="top-image"　src="/img/top-index.jpg"　alt="トップイラスト"/>
+  
+ <div class="two-column">
+     
+ <section>
+     
+    <h3 id="about"><img src="/img/about.png" alt="ABOUT" /></h3>
+        <p> たまさかによるたまさかのための自由帳サイト。<br>漫画やイラストをたまに更新します。</p>
+        
+     <h2>ATTENTION</h2>
+        <p>作品中人によってはセンシティブな表現を含みます。<br>
+          何でも許せる方のみお楽しみ下さい。<br>
+          作品の内容は全てフィクションであり、実在の人物や団体などとは一切関係ございません。<br>
+          良識の範囲内でご覧ください。</p>
+        <p>イラストや文章の無断転載や加工等はご遠慮ください。</p>
 
-      <section>
-        <a href="/about" class="btn">
-          初めての方はこちらをご一読下さい
-        </a>
+         <img src="/img/quare-white_black.gif" alt="区切り線">
 
-      <UpdateList updates={updates} />
+     <h3>LINK</h3>
+         <a href="https://compslink.jp">
+            <img src="/img/bnn01.png" alt="Comps Link">
+         </a>
 
-       
-      </section>
+  </section>
+
+<aside>
+
+  <h3>管理者</h3>
+  <center> 
+    <img class="profile-image" src="/img/tamasaka.jpg" alt="たまさか">
+    <h6>たまさか</h6>
+    <p class="profile-text">
+      自己紹介でオムか？<br>
+      最近はずっと寝ていたいでライスね〜
+    </p>
+  </center> 
+   
+
+  <div class="sns-buttons">
+    <a href="https://bsky.app/..." target="_blank">
+      <img src="/img/bluesky.png" alt="Bluesky">
+    </a>
+    <a href="https://wavebox.me/wave/8b8xxrlmpm3iuqwc/" target="_blank">
+      <img src="/img/wavebox.png" alt="Wavebox">
+    </a>
+  </div>
+
+   
+
+</aside>
+
+     </div>
+  <center> 
+    <div class="update-list">
+       <UpdateList updates={updates} />
+    </div>
+  </center>
+
     </div>
 
-
-  <style>
-    .top-image {
-      width: 100%;
-      margin: 0;
-    }
-
-  </style>
 </Layout>

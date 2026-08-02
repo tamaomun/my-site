@@ -1117,7 +1117,7 @@ dl.update dd {
     display: -webkit-box;
     display: flex;
     flex-wrap: wrap;
-    max-width: 600px;
+    max-width: 100%;
     margin: 40px auto 40px 0;
   }
   dl.update dt {
