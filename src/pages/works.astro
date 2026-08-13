@@ -1,0 +1,292 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PaperItem from "../components/PaperItem.astro";
+import IllustItem from "../components/IllustItem.astro";
+import { works } from "../data/works";
+
+const comics = works.filter((work) => work.type === "comic");
+const illusts = works.filter((work) => work.type === "illust");
+---
+
+<Layout title="WORKS | 深夜チキンライス・ガイド">
+
+  <div class="container">
+    <section>
+
+      <h1>WORKS</h1>
+
+      <nav class="work-tags">
+        <button data-tag="all" class="active">すべて</button>
+        <button data-tag="漫画">漫画</button>
+        <button data-tag="イラスト">イラスト</button>
+        <button data-tag="一枚絵">一枚絵</button>
+        <button data-tag="漫画関連">漫画関連</button>
+        <button data-tag="ペーパー">ペーパー</button>
+      </nav>
+
+
+<div class="work-section" data-section="comic">
+
+  <h2 class="works-heading">漫画</h2>
+
+  <div class="works-list comic-list">
+
+    {comics.map((work) => (
+
+      <div
+        class="work-item comic"
+        data-tags={work.tags.join(",")}
+      >
+
+        <PaperItem
+          title={work.title}
+          image={work.image}
+          description={work.description}
+          buttons={work.buttons}
+        />
+
+      </div>
+
+    ))}
+
+  </div>
+
+</div>
+
+
+<div class="work-section" data-section="illust">
+
+  <h2 class="works-heading">イラスト</h2>
+
+  <div class="works-list illust-list">
+
+    {illusts.map((work) => (
+
+      <div
+        class="work-item illust"
+        data-tags={work.tags.join(",")}
+      >
+
+        <ul class="illust">
+          <IllustItem
+            image={work.image}
+            caption={work.caption}
+            showCaption={true}
+          />
+        </ul>
+
+      </div>
+
+    ))}
+
+  </div>
+
+</div>
+
+    </section>
+  </div>
+
+
+  <script>
+    const buttons = document.querySelectorAll(".work-tags button");
+    const items = document.querySelectorAll(".work-item");
+    const sections = document.querySelectorAll(".work-section");
+
+    buttons.forEach((button) => {
+
+  button.addEventListener("click", () => {
+
+    const tag = button.dataset.tag;
+
+    // 選択中ボタンを変更
+    buttons.forEach((btn) => {
+      btn.classList.remove("active");
+    });
+
+    button.classList.add("active");
+
+
+    // 作品をタグで絞り込む
+    items.forEach((item) => {
+
+      const tags = item.dataset.tags?.split(",") ?? [];
+
+      if (tag === "all" || tags.includes(tag)) {
+        item.removeAttribute("hidden");
+      } else {
+        item.setAttribute("hidden", "");
+      }
+
+    });
+
+
+    // 中身が全部消えたセクションは、見出しごと隠す
+    sections.forEach((section) => {
+
+      const sectionItems = section.querySelectorAll(".work-item");
+      const visibleItems = [...sectionItems].filter(
+        (item) => !item.hasAttribute("hidden")
+      );
+
+      if (visibleItems.length === 0) {
+        section.setAttribute("hidden", "");
+      } else {
+        section.removeAttribute("hidden");
+      }
+
+    });
+
+  });
+
+});
+  </script>
+
+<style>
+  .work-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+
+  .work-tags button {
+    padding: 6px 12px;
+    border: 1px solid #999;
+    border-radius: 20px;
+    background: white;
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .work-tags button:hover {
+    background: #f5f5f5;
+  }
+
+  .work-tags button.active {
+    background: #333;
+    color: white;
+    border-color: #333;
+  }
+
+
+  /* 作品全体 */
+  .works-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+
+  /* 漫画は横幅いっぱい */
+  .work-item.comic {
+    width: 100%;
+  }
+
+
+  /* イラストは4列 */
+  .work-item.illust {
+    width: calc((100% - 48px) / 4);
+  }
+
+
+  /* イラスト側の余白をリセット */
+.work-item.illust .illust {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* IllustItem.astro の中までCSSを届かせる */
+.work-item.illust :global(.illust li) {
+  width: 100%;
+  margin: 0;
+}
+
+.work-item.illust :global(.illust li:not(:nth-of-type(5n))) {
+  margin-right: 0;
+}
+
+.work-item.illust :global(.illust li a) {
+  width: 100%;
+}
+
+.work-item.illust :global(.illust img) {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+
+  /* 非表示 */
+  .work-item[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 600px) {
+  .work-item.illust {
+    width: calc((100% - 8px) / 2);
+  }
+
+  .works-list {
+    gap: 8px;
+  }
+}
+
+.work-item.illust :global(.illust-caption) {
+  margin: 0;
+  padding: 8px 6px;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+  color: white;
+}
+
+.work-item.illust :global(.illust li::before) {
+  display: none;
+}
+
+.work-item.illust :global(.illust li a) {
+  position: static;
+  display: block;
+}
+
+.work-item.illust :global(.illust img) {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+.work-item.illust :global(.illust li) {
+  overflow: hidden;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+}
+
+.work-item.illust :global(.illust-caption) {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.work-section {
+  width: 100%;
+  margin-bottom: 50px;
+}
+
+.works-heading {
+  width: 100%;
+  margin: 20px 0 20px;
+  padding-bottom: 5px;
+  border-bottom: 2px solid white;
+  text-align: left;
+  font-size: 21px;
+}
+
+.work-section[hidden] {
+  display: none;
+}
+</style>
+
+
+</Layout>
+

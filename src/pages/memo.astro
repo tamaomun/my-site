@@ -1,5 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+const posts = await getCollection("blog");
 ---
 
 
@@ -8,75 +11,24 @@ import Layout from "../layouts/Layout.astro";
     <section class="indent">
       <div class="memo-heading">
         <img src="/img/memo.png" alt="MEMO" />
-        <p>たまさかうろんな怪文書</p>
       </div>
 
-      
-
-      
-
+     {
+  posts.map((post) => (
+    <a href={`/blog/${post.id}/`} class="memo-link">
       <div class="box1">
-        <h6>2025/10/6</h6>
-        <p>
-          やっとサイト触れた…！<br />
-          来年2月のコミティアには受かったら参加しようと思ってます！<br />
-          年末までにネーム貯めたいな〜貯まるかな〜
-        </p>
-      </div>
+        <h6>
+          {post.data.date.toLocaleDateString("ja-JP")}
+        </h6>
 
-      <div class="box1">
-        <h6>2025/6/4</h6>
-        <p>
-          先日参加のコミティアで漫画がようやくまとまった形になったので、再UPとサイトもちょっと見やすく整理しました。<br />
-          今後はちょくちょく更新したい…月に一回ぐらいで更新できたら理想！
-        </p>
-      </div>
+        <h2>{post.data.title}</h2>
 
-      <div class="box1">
-        <h6>2024/11/19</h6>
-        <p>
-          イベントお疲れ様でした〜。<br />
-          イベント前日にペン入れを始め、トーンを終わらせて今回もギリギリ入稿しました。本出せて良かった〜。<br />
-          次こそは余裕あるスケジュールと製本された本を…！
-        </p>
+        <p>{post.data.description}</p>
       </div>
+    </a>
+  ))
+}
 
-      <div class="box1">
-        <h6>2024/11/4</h6>
-        <p>
-          じゅ、11月！コミティア間近になってきている。<br />
-          今回ポン酢クリームライスというサークルで参加します！ポスターや合同誌の方参加したのでサイトに一部アップしました。<br />
-          サークルのホームページもイベントに合わせて準備中です。<br />
-          個人誌の漫画の方も同じく準備中です……毎回ギリギリの脱稿をしている気がする…<br />
-          ま、まあ本って２pあれば成立するから(暴論)
-        </p>
-      </div>
-
-      <div class="box1">
-        <h6>2024/10/9</h6>
-        <p>
-          いきなり寒くなってきた！時間に余裕が出てきたので原稿をやりたい…やりたいって気持ちはあるんだよな。<br />
-          拍手して下さった方々ありがとうございました！映画ネタ触れて下さった方もありがとうございます( ¯▽¯ )<br />
-          皆さんこんな辺境の地まで遥々お越しくださりありがとうございます…。
-        </p>
-      </div>
-
-      <div class="box1">
-        <h6>2024/9/27</h6>
-        <p>
-          いつの間にか涼しくなっている！秋だ！<br />
-          うかうかしてるとコミティアまで残り一週間とかになってそうで非常に不味い。
-        </p>
-      </div>
-
-      <div class="box1">
-        <h6>2024/9/15</h6>
-        <p>
-          サイトひらけたか？と思ったらハンバーガーボタンが作動していない！と思ったらキャッシュが原因だった。<br />
-          サイト作り難しい…けど築城感あって結構楽しい！<br />
-          他のサイトも色々見ながらおっ！これどうやってるんだろうとか考えるのも楽しい。
-        </p>
-      </div>
 
       <ul class="pagination">
         <li>
@@ -86,3 +38,33 @@ import Layout from "../layouts/Layout.astro";
     </section>
   </div>
 </Layout>
+
+
+<style>
+  .memo-link {
+    color: white;
+    text-decoration: none;
+    display: block;
+  }
+
+  .memo-link h2 {
+    color: white;
+  }
+  
+  .memo-link h6 {
+    margin-bottom: 5px;
+   }
+
+  .memo-link :global(h2) {
+  margin-top: 0;
+  margin-bottom: 5px;
+  color: white;
+  font-size: 14px;
+}
+
+.memo-link :global(p) {
+  font-size: 13px;
+  line-height: 1.7;
+  margin-top: 0;
+}
+</style>

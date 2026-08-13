@@ -2,9 +2,10 @@
 interface Props {
   image: string;
   caption: string;
+  showCaption?: boolean;
 }
 
-const { image, caption } = Astro.props;
+const { image, caption, showCaption = false } = Astro.props;
 ---
 
 <li>
@@ -16,4 +17,8 @@ const { image, caption } = Astro.props;
   >
     <img src={image} alt={caption} />
   </a>
+
+  {showCaption && (
+  <p class="illust-caption">{caption}</p>
+)}
 </li>

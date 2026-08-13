@@ -1,0 +1,29 @@
+---
+import { getCollection } from "astro:content";
+
+const posts = await getCollection("blog");
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>メモ</title>
+  </head>
+
+  <body>
+    <h1>メモ</h1>
+
+    <ul>
+      {
+        posts.map((post) => (
+          <li>
+            <h2>{post.data.title}</h2>
+            <p>{post.data.description}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </body>
+</html>

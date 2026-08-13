@@ -1,0 +1,69 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+
+  return posts.map((post) => ({
+    params: { id: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<Layout title={`${post.data.title} | MEMO`}>
+  <div class="container">
+    <section class="indent">
+      <div class="box1 article-box">
+        <h6>
+          {post.data.date.toLocaleDateString("ja-JP")}
+        </h6>
+
+        <h1>{post.data.title}</h1>
+
+        <div class="article-body">
+          <Content />
+        </div>
+      </div>
+
+      <p class="back-link">
+        <a href="/memo">← MEMOに戻る</a>
+      </p>
+    </section>
+  </div>
+</Layout>
+
+
+<style>
+  .article-box h1 {
+  text-align: left;
+  font-size: 14px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+  .article-body {
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+  .article-body :global(h2),
+  .article-body :global(h3) {
+    text-align: left;
+  }
+
+  .article-body :global(p) {
+  font-size: 14px !important;
+  line-height: 1.7;
+  margin: 0 0 4px 0;
+}
+
+  .back-link {
+    margin-top: 30px;
+  }
+</style>
