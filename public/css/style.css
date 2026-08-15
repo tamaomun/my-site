@@ -655,10 +655,8 @@ section.indent p {
     display: flex;
   }
   .two-column aside {
-    width: 180px;
-    padding: 20px;
-    margin-left: auto;
-    border-left: none;
+    width: 300px;
+    padding: 20px;   
 }
   .two-column aside h2,
   .two-column aside h3 {
@@ -671,7 +669,7 @@ section.indent p {
     font-size: 14px;
   }
   .two-column .contents {
-    width: calc(100% - 180px);
+    width: calc(100% - 320px);
   }
 }
 
@@ -1154,3 +1152,4 @@ a#totop:hover:before {top: 20px;}
 .update-list {
   margin-top: 60px;
 }
+
