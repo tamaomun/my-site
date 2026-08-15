@@ -10,11 +10,9 @@ import { works } from "../data/works";
 
       <nav class="work-tags" aria-label="作品の絞り込み">
         <button type="button" data-tag="all" class="active">すべて</button>
-        <button type="button" data-tag="漫画">漫画</button>
         <button type="button" data-tag="イラスト">イラスト</button>
-        <button type="button" data-tag="一枚絵">一枚絵</button>
-        <button type="button" data-tag="漫画関連">漫画関連</button>
-        <button type="button" data-tag="ペーパー">ペーパー</button>
+        <button type="button" data-tag="漫画">漫画</button>
+        <button type="button" data-tag="舞台裏">舞台裏</button>
       </nav>
 
       <div class="works-list">
@@ -26,6 +24,8 @@ import { works } from "../data/works";
             data-title={work.title}
             data-images={JSON.stringify(work.images ?? [work.thumbnail])}
             data-type={work.type}
+            data-show-in-all={work.showInAll !== false}
+            hidden={work.showInAll === false}
           >
             <img src={work.thumbnail} alt="" />
             <span>{work.title}</span>
@@ -134,8 +134,12 @@ import { works } from "../data/works";
       const last = Math.min(currentIndex + step, currentImages.length);
       viewerCount.textContent = step === 2 ? `${first}–${last} / ${currentImages.length}` : `${first} / ${currentImages.length}`;
 
-      if (viewerPrev instanceof HTMLButtonElement) viewerPrev.disabled = currentIndex === 0;
-      if (viewerNext instanceof HTMLButtonElement) viewerNext.disabled = last >= currentImages.length;
+      if (viewerPrev instanceof HTMLButtonElement)
+       viewerPrev.disabled = last >= currentImages.length;
+
+      if (viewerNext instanceof HTMLButtonElement)
+       viewerNext.disabled = currentIndex === 0;
+    
     }
 
     tagButtons.forEach((button) => {
@@ -145,9 +149,17 @@ import { works } from "../data/works";
         tagButtons.forEach((btn) => btn.classList.toggle("active", btn === button));
 
         workItems.forEach((item) => {
-          const tags = item.getAttribute("data-tags")?.split(",") ?? [];
-          item.toggleAttribute("hidden", tag !== "all" && !tags.includes(tag));
-        });
+         const tags = item.getAttribute("data-tags")?.split(",") ?? [];
+         const showInAll = item.getAttribute("data-show-in-all") !== "false";
+
+         const shouldHide =
+          tag === "all"
+           ? !showInAll
+           : !tags.includes(tag);
+
+         item.toggleAttribute("hidden", shouldHide);
+         });
+
       });
     });
 
@@ -184,14 +196,17 @@ import { works } from "../data/works";
     });
 
     viewerPrev?.addEventListener("click", () => {
-      currentIndex = Math.max(0, currentIndex - (isSpread() ? 2 : 1));
+      currentIndex = Math.min(
+      currentImages.length - 1,
+      currentIndex + (isSpread() ? 2 : 1)
+       );
       updateViewer();
-    });
+      });
 
     viewerNext?.addEventListener("click", () => {
-      currentIndex = Math.min(currentImages.length - 1, currentIndex + (isSpread() ? 2 : 1));
+      currentIndex = Math.max(0, currentIndex - (isSpread() ? 2 : 1));
       updateViewer();
-    });
+      });
 
     window.addEventListener("resize", updateViewer);
   </script>
