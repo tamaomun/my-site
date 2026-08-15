@@ -1,118 +1,101 @@
+const numberedImages = (folder: string, prefix: string, count: number) =>
+  Array.from({ length: count }, (_, i) => `/img/${folder}/${prefix}${i + 1}.jpg`);
+
 export const works = [
-  // ──────────────
-  // 漫画
-  // ──────────────
-
+  {
+    type: "illust",
+    tags: ["イラスト", "一枚絵"],
+    title: "合同誌「青」サンプル",
+    thumbnail: "/img/blue2/blue21.jpg",
+    images: numberedImages("blue2", "blue2", 2),
+  },
+  {
+    type: "illust",
+    tags: ["イラスト", "一枚絵"],
+    title: "合同誌「ピンク」サンプル",
+    thumbnail: "/img/pinku/illustp1.jpg",
+    images: numberedImages("pinku", "illustp", 1),
+  },
+{
+    type: "comic",
+    tags: ["漫画", "ペーパー", "漫画関連"],
+    title: "無配＃6",
+    thumbnail: "/img/muhai6/muhai6_1.jpg",
+    images: numberedImages("muhai6", "muhai6_", 2),
+  },
+  {
+    type: "illust",
+    tags: ["イラスト", "一枚絵"],
+    title: "合同誌「緑」",
+    thumbnail: "/img/midori/illustm1.jpg",
+    images: numberedImages("midori", "illustm", 2),
+  },
   {
     type: "comic",
-    tags: ["漫画"],
+    tags: ["漫画", "ペーパー", "漫画関連"],
+    title: "無配＃5",
+    thumbnail: "/img/muhai5/muhai.jpg",
+    images: numberedImages("muhai5", "muhai5_", 3),
+  },
+  
+  {
+    type: "comic",
+    tags: ["漫画", "漫画関連"],
     title: "マシシャン達の珍道中",
-    image: "/img/enter1.jpg",
-    buttons: [
-      { text: "第一話", link: "/title01/p1.html" }
-    ]
+    thumbnail: "/img/parahote1/enter1.jpg",
+    images: numberedImages("parahote1", "itiwa", 35),
   },
-
+  {
+    type: "illust",
+    tags: ["イラスト", "一枚絵"],
+    title: "名刺",
+    thumbnail: "/img/illust9.jpg",
+  },
   {
     type: "comic",
-    tags: ["漫画", "ペーパー"],
-    title: "無配ペーパー達",
-    image: "/img/enter2.jpg",
-    description: "イベント参加毎のおまけです",
-    buttons: [
-      { text: "#1", link: "/title02/p1.html" },
-      { text: "#2", link: "/title02/p2.html" },
-      { text: "#3", link: "/title02/p3.html" },
-      { text: "#4", link: "/title02/p4.html" },
-      { text: "#5", link: "/title02/p5.html" },
-      { text: "#6", link: "/title02/p6.html" }
-    ]
+    tags: ["漫画", "ペーパー", "漫画関連"],
+    title: "無配＃4",
+    thumbnail: "/img/muhai4/illust10.jpg",
+    images: numberedImages("muhai4", "muhai4_", 3),
   },
-
-
-  // ──────────────
-  // 一枚絵
-  // ──────────────
-
   {
     type: "illust",
     tags: ["イラスト", "一枚絵"],
-    image: "/img/illust16.jpg",
-    caption: "合同誌「ピンク」サンプル"
+    title: "合同誌「白」",
+    thumbnail: "/img/siro/illust11.jpg",
+    images: numberedImages("siro", "illust1", 3),
   },
-
   {
-    type: "illust",
-    tags: ["イラスト", "一枚絵"],
-    image: "/img/illust14.jpg",
-    caption: "合同誌「緑」1"
+    type: "comic",
+    tags: ["漫画", "ペーパー", "漫画関連"],
+    title: "無配＃3",
+    thumbnail: "/img/muhai3/muhai3_1.jpg",
+    images: numberedImages("muhai3", "muhai3_", 2),
   },
-
   {
-    type: "illust",
-    tags: ["イラスト", "一枚絵"],
-    image: "/img/illust15.jpg",
-    caption: "合同誌「緑」2"
+    type: "comic",
+    tags: ["漫画", "ペーパー", "漫画関連"],
+    title: "無配＃2",
+    thumbnail: "/img/muhai2/muhai2_1.jpg",
+    images: numberedImages("muhai2", "muhai2_", 2),
   },
-
   {
-    type: "illust",
-    tags: ["イラスト", "一枚絵"],
-    image: "/img/illust12.jpg",
-    caption: "合同誌「白」1"
+    type: "comic",
+    tags: ["漫画", "ペーパー", "漫画関連"],
+    title: "無配＃1",
+    thumbnail: "/img/muhai1/muhai1_1.jpg",
+    images: numberedImages("muhai1", "muhai1_", 2),
   },
-
-  {
-    type: "illust",
-    tags: ["イラスト", "一枚絵"],
-    image: "/img/illust11.jpg",
-    caption: "合同誌「白」2"
-  },
-
-  {
-    type: "illust",
-    tags: ["イラスト", "一枚絵"],
-    image: "/img/illust13.jpg",
-    caption: "合同誌「白」3"
-  },
-
-  {
-    type: "illust",
-    tags: ["イラスト", "一枚絵"],
-    image: "/img/illust9.jpg",
-    caption: "名刺"
-  },
-
-
-  // ──────────────
-  // 漫画関連イラスト
-  // ──────────────
-
   {
     type: "illust",
     tags: ["イラスト", "漫画関連"],
-    image: "/img/illust8.jpg",
-    caption: "無配表紙"
+    title: "サクカ",
+    thumbnail: "/img/illust1.jpg",
   },
-
   {
     type: "illust",
     tags: ["イラスト", "漫画関連"],
-    image: "/img/illust10.jpg",
-    caption: "らくがき"
+    title: "太陽初期案",
+    thumbnail: "/img/illust5.jpg",
   },
-
-  {
-    type: "illust",
-    tags: ["イラスト", "漫画関連"],
-    image: "/img/illust1.jpg",
-    caption: "サクカ"
-  },
-
-  {
-    type: "illust",
-    tags: ["イラスト", "漫画関連"],
-    image: "/img/illust5.jpg",
-    caption: "太陽初期案"
-  }
 ];

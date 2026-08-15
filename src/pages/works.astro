@@ -1,292 +1,384 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import PaperItem from "../components/PaperItem.astro";
-import IllustItem from "../components/IllustItem.astro";
 import { works } from "../data/works";
-
-const comics = works.filter((work) => work.type === "comic");
-const illusts = works.filter((work) => work.type === "illust");
 ---
 
 <Layout title="WORKS | 深夜チキンライス・ガイド">
-
   <div class="container">
     <section>
-
       <h1>WORKS</h1>
 
-      <nav class="work-tags">
-        <button data-tag="all" class="active">すべて</button>
-        <button data-tag="漫画">漫画</button>
-        <button data-tag="イラスト">イラスト</button>
-        <button data-tag="一枚絵">一枚絵</button>
-        <button data-tag="漫画関連">漫画関連</button>
-        <button data-tag="ペーパー">ペーパー</button>
+      <nav class="work-tags" aria-label="作品の絞り込み">
+        <button type="button" data-tag="all" class="active">すべて</button>
+        <button type="button" data-tag="漫画">漫画</button>
+        <button type="button" data-tag="イラスト">イラスト</button>
+        <button type="button" data-tag="一枚絵">一枚絵</button>
+        <button type="button" data-tag="漫画関連">漫画関連</button>
+        <button type="button" data-tag="ペーパー">ペーパー</button>
       </nav>
 
-
-<div class="work-section" data-section="comic">
-
-  <h2 class="works-heading">漫画</h2>
-
-  <div class="works-list comic-list">
-
-    {comics.map((work) => (
-
-      <div
-        class="work-item comic"
-        data-tags={work.tags.join(",")}
-      >
-
-        <PaperItem
-          title={work.title}
-          image={work.image}
-          description={work.description}
-          buttons={work.buttons}
-        />
-
+      <div class="works-list">
+        {works.map((work) => (
+          <button
+            type="button"
+            class="work-item"
+            data-tags={work.tags.join(",")}
+            data-title={work.title}
+            data-images={JSON.stringify(work.images ?? [work.thumbnail])}
+            data-type={work.type}
+          >
+            <img src={work.thumbnail} alt="" />
+            <span>{work.title}</span>
+          </button>
+        ))}
       </div>
 
-    ))}
 
+  <div id="work-viewer" hidden>
+
+   <button id="viewer-close" type="button" aria-label="閉じる">
+    ×
+   </button>
+
+  <h3 id="viewer-title"></h3>
+
+  <div class="viewer-status">
+    <span id="viewer-count">1 / 1</span>
+  </div>
+
+  <div class="viewer-area">
+    <button
+      id="viewer-prev"
+      class="viewer-arrow"
+      type="button"
+      aria-label="前へ"
+    >
+      ←
+    </button>
+
+    <div id="viewer-images"></div>
+
+    <button
+      id="viewer-next"
+      class="viewer-arrow"
+      type="button"
+      aria-label="次へ"
+    >
+      →
+    </button>
   </div>
 
 </div>
 
-
-<div class="work-section" data-section="illust">
-
-  <h2 class="works-heading">イラスト</h2>
-
-  <div class="works-list illust-list">
-
-    {illusts.map((work) => (
-
-      <div
-        class="work-item illust"
-        data-tags={work.tags.join(",")}
-      >
-
-        <ul class="illust">
-          <IllustItem
-            image={work.image}
-            caption={work.caption}
-            showCaption={true}
-          />
-        </ul>
-
-      </div>
-
-    ))}
-
-  </div>
-
+</section>
 </div>
-
-    </section>
-  </div>
-
 
   <script>
-    const buttons = document.querySelectorAll(".work-tags button");
-    const items = document.querySelectorAll(".work-item");
-    const sections = document.querySelectorAll(".work-section");
+    const tagButtons = document.querySelectorAll(".work-tags button");
+    const workItems = document.querySelectorAll(".work-item");
+    const viewer = document.querySelector("#work-viewer");
+    const viewerTitle = document.querySelector("#viewer-title");
+    const viewerImages = document.querySelector("#viewer-images");
+    const viewerPrev = document.querySelector("#viewer-prev");
+    const viewerNext = document.querySelector("#viewer-next");
+    const viewerCount = document.querySelector("#viewer-count");
+    const viewerClose = document.querySelector("#viewer-close");
 
-    buttons.forEach((button) => {
+    let currentIndex = 0;
+    let currentImages = [];
+    let currentType = "illust";
 
-  button.addEventListener("click", () => {
+    const isSpread = () => currentType === "comic" && window.innerWidth >= 701;
 
-    const tag = button.dataset.tag;
+    function closeViewer() {
+     if (viewer instanceof HTMLElement) {
+       viewer.hidden = true;
+     }
+    }
 
-    // 選択中ボタンを変更
-    buttons.forEach((btn) => {
-      btn.classList.remove("active");
+    viewerClose?.addEventListener("click", closeViewer);
+
+    document.addEventListener("keydown", (event) => {
+     if (event.key === "Escape") {
+      closeViewer();
+     }
     });
 
-    button.classList.add("active");
 
+    viewer?.addEventListener("click", (event) => {
+     const target = event.target;
 
-    // 作品をタグで絞り込む
-    items.forEach((item) => {
+     if (!(target instanceof Element)) return;
 
-      const tags = item.dataset.tags?.split(",") ?? [];
+     if (
+        target.closest("#viewer-images, #viewer-prev, #viewer-next, #viewer-close, #viewer-title, .viewer-status")
+      ) {return;}
 
-      if (tag === "all" || tags.includes(tag)) {
-        item.removeAttribute("hidden");
-      } else {
-        item.setAttribute("hidden", "");
-      }
+      closeViewer();
+      });
 
+    
+    
+    function updateViewer() {
+      if (!(viewerImages instanceof HTMLElement) || !(viewerCount instanceof HTMLElement)) return;
+
+      const step = isSpread() ? 2 : 1;
+      const spreadIndex = Math.floor(currentIndex / step);
+
+      viewerImages.scrollTo({
+        left: -viewerImages.clientWidth * spreadIndex,
+        behavior: "smooth",
+      });
+
+      const first = currentIndex + 1;
+      const last = Math.min(currentIndex + step, currentImages.length);
+      viewerCount.textContent = step === 2 ? `${first}–${last} / ${currentImages.length}` : `${first} / ${currentImages.length}`;
+
+      if (viewerPrev instanceof HTMLButtonElement) viewerPrev.disabled = currentIndex === 0;
+      if (viewerNext instanceof HTMLButtonElement) viewerNext.disabled = last >= currentImages.length;
+    }
+
+    tagButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const tag = button.getAttribute("data-tag") ?? "all";
+
+        tagButtons.forEach((btn) => btn.classList.toggle("active", btn === button));
+
+        workItems.forEach((item) => {
+          const tags = item.getAttribute("data-tags")?.split(",") ?? [];
+          item.toggleAttribute("hidden", tag !== "all" && !tags.includes(tag));
+        });
+      });
     });
 
+    workItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        if (!(viewer instanceof HTMLElement) || !(viewerTitle instanceof HTMLElement) || !(viewerImages instanceof HTMLElement)) return;
 
-    // 中身が全部消えたセクションは、見出しごと隠す
-    sections.forEach((section) => {
+        const title = item.getAttribute("data-title") ?? "";
+        const images = JSON.parse(item.getAttribute("data-images") ?? "[]");
+        currentType = item.getAttribute("data-type") ?? "illust";
+        currentImages = images;
+        currentIndex = 0;
 
-      const sectionItems = section.querySelectorAll(".work-item");
-      const visibleItems = [...sectionItems].filter(
-        (item) => !item.hasAttribute("hidden")
-      );
+        viewer.dataset.type = currentType;
+        viewerTitle.textContent = title;
+        viewerImages.replaceChildren();
 
-      if (visibleItems.length === 0) {
-        section.setAttribute("hidden", "");
-      } else {
-        section.removeAttribute("hidden");
-      }
+        images.forEach((src) => {
+          const page = document.createElement("div");
+          page.className = "viewer-page";
 
+          const img = document.createElement("img");
+          img.src = src;
+          img.alt = title;
+
+          page.appendChild(img);
+          viewerImages.appendChild(page);
+        });
+
+        viewer.hidden = false;
+        updateViewer();
+        
+      });
     });
 
-  });
+    viewerPrev?.addEventListener("click", () => {
+      currentIndex = Math.max(0, currentIndex - (isSpread() ? 2 : 1));
+      updateViewer();
+    });
 
-});
+    viewerNext?.addEventListener("click", () => {
+      currentIndex = Math.min(currentImages.length - 1, currentIndex + (isSpread() ? 2 : 1));
+      updateViewer();
+    });
+
+    window.addEventListener("resize", updateViewer);
   </script>
 
-<style>
-  .work-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 40px;
-  }
+  <style>
 
-  .work-tags button {
-    padding: 6px 12px;
-    border: 1px solid #999;
-    border-radius: 20px;
-    background: white;
-    cursor: pointer;
-    font: inherit;
-  }
+    /* =========================
+    1. サムネ一覧
+    ========================= */
 
-  .work-tags button:hover {
-    background: #f5f5f5;
-  }
+    :root {
+      /* サムネ */
+      --work-gap: 10px;
 
-  .work-tags button.active {
-    background: #333;
+      /* 作品ビュー */
+      --viewer-height: 80vh;
+    }
+
+    .work-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 40px;
+    }
+
+    .work-tags button {
+      padding: 6px 12px;
+      border: 1px solid #999;
+      border-radius: 20px;
+      background: white;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .work-tags button.active {
+      background: #333;
+      color: white;
+      border-color: #333;
+    }
+
+    .works-list {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--work-gap);
+    }
+
+    .work-item {
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      background: transparent;
+      color: white;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .work-item img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+    }
+
+    .work-item span {
+      display: block;
+      padding: 8px 6px;
+      font-size: 12px;
+      line-height: 1.4;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .work-item[hidden] { display: none; }
+
+
+    /* =========================
+    2. モーダル
+    ========================= */
+
+    #work-viewer {
+     position: fixed;
+     inset: 0;
+     z-index: 1000;
+
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+
+     padding: 20px;
+
+     background: rgba(0, 0, 0, 0.85);
+     }
+
+    #work-viewer[hidden] {display: none;}
+
+ 
+
+   #viewer-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+
+    border: 0;
+    background: transparent;
     color: white;
-    border-color: #333;
-  }
+
+    font-size: 32px;
+    cursor: pointer;
+    }
 
 
-  /* 作品全体 */
-  .works-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
+    #viewer-title,
+     .viewer-status {
+      width: min(1400px, 96vw);
+      margin-left: auto;
+      margin-right: auto;
+      }
 
+    .viewer-area {
+     display: flex;
+     align-items: center;
+     gap: 12px;
 
-  /* 漫画は横幅いっぱい */
-  .work-item.comic {
-    width: 100%;
-  }
+     width: min(1400px, 96vw);
+     margin: 0 auto;
+     }
 
+    #viewer-images {
+      display: flex;
+      flex: 1;
+      min-width: 0;
+      overflow-x: auto;
+      direction: rtl;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+    }
 
-  /* イラストは4列 */
-  .work-item.illust {
-    width: calc((100% - 48px) / 4);
-  }
+    :global(.viewer-page) {
+      flex: 0 0 100%;
+      height: var(--viewer-height);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      scroll-snap-align: start;
+    }
 
+    #work-viewer[data-type="comic"] :global(.viewer-page) {
+      flex-basis: 50%;
+    }
 
-  /* イラスト側の余白をリセット */
-.work-item.illust .illust {
-  width: 100%;
-  margin: 0;
-  padding: 0;
-}
+    :global(.viewer-page img) {
+      display: block;
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
 
-/* IllustItem.astro の中までCSSを届かせる */
-.work-item.illust :global(.illust li) {
-  width: 100%;
-  margin: 0;
-}
+    .viewer-arrow {
+      flex: 0 0 44px;
+      width: 44px;
+      height: 44px;
+      border: 1px solid #999;
+      border-radius: 50%;
+      background: transparent;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
 
-.work-item.illust :global(.illust li:not(:nth-of-type(5n))) {
-  margin-right: 0;
-}
+    .viewer-arrow:disabled { opacity: 0.25; cursor: default; }
+    
 
-.work-item.illust :global(.illust li a) {
-  width: 100%;
-}
+    /* =========================
+     3. スマホ
+    ========================= */
 
-.work-item.illust :global(.illust img) {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-}
+    @media (max-width: 700px) {
+      :root { --viewer-height: 70vh; }
+      .works-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      #work-viewer[data-type="comic"] :global(.viewer-page) { flex-basis: 100%; }
+      .viewer-area { width: 100%; gap: 6px; }
+      .viewer-arrow { flex-basis: 36px; width: 36px; height: 36px; }
+    }
 
-
-  /* 非表示 */
-  .work-item[hidden] {
-    display: none;
-  }
-
-  @media (max-width: 600px) {
-  .work-item.illust {
-    width: calc((100% - 8px) / 2);
-  }
-
-  .works-list {
-    gap: 8px;
-  }
-}
-
-.work-item.illust :global(.illust-caption) {
-  margin: 0;
-  padding: 8px 6px;
-  font-size: 12px;
-  line-height: 1.4;
-  text-align: center;
-  color: white;
-}
-
-.work-item.illust :global(.illust li::before) {
-  display: none;
-}
-
-.work-item.illust :global(.illust li a) {
-  position: static;
-  display: block;
-}
-
-.work-item.illust :global(.illust img) {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  display: block;
-}
-
-.work-item.illust :global(.illust li) {
-  overflow: hidden;
-  border: 1px solid #aaa;
-  border-radius: 6px;
-}
-
-.work-item.illust :global(.illust-caption) {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.work-section {
-  width: 100%;
-  margin-bottom: 50px;
-}
-
-.works-heading {
-  width: 100%;
-  margin: 20px 0 20px;
-  padding-bottom: 5px;
-  border-bottom: 2px solid white;
-  text-align: left;
-  font-size: 21px;
-}
-
-.work-section[hidden] {
-  display: none;
-}
-</style>
-
-
+  </style>
 </Layout>
-

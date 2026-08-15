@@ -5,20 +5,17 @@ interface Props {
   showCaption?: boolean;
 }
 
-const { image, caption, showCaption = false } = Astro.props;
+const {
+  image,
+  caption,
+  showCaption = true
+} = Astro.props;
 ---
 
 <li>
-  <a
-    href={image}
-    data-fimg="sweets"
-    class="fuwaimg"
-    data-fcaption={caption}
-  >
-    <img src={image} alt={caption} />
-  </a>
+  <img src={image} alt={caption} />
 
   {showCaption && (
-  <p class="illust-caption">{caption}</p>
-)}
+    <p class="illust-caption">{caption}</p>
+  )}
 </li>
