@@ -5,14 +5,14 @@ export const works = [
   {
     type: "illust",
     tags: ["イラスト"],
-    title: "合同誌「青」サンプル",
+    title: "BLUE",
     thumbnail: "/img/blue2/blue21.jpg",
     images: numberedImages("blue2", "blue2", 2),
   },
   {
     type: "illust",
     tags: ["イラスト"],
-    title: "合同誌「ピンク」サンプル",
+    title: "PINK",
     thumbnail: "/img/pinku/illustp1.jpg",
     images: numberedImages("pinku", "illustp", 1),
   },
@@ -27,7 +27,7 @@ export const works = [
   {
     type: "illust",
     tags: ["イラスト"],
-    title: "合同誌「緑」",
+    title: "GREEN",
     thumbnail: "/img/midori/illustm1.jpg",
     images: numberedImages("midori", "illustm", 2),
   },
@@ -40,17 +40,27 @@ export const works = [
     showInAll: false,
   },
   
+  /*
   {
     type: "comic",
     tags: ["漫画"],
-    title: "マシシャン達の珍道中",
+    title: "マジシャン達の珍道中",
     thumbnail: "/img/parahote1/enter1.jpg",
     images: numberedImages("parahote1", "itiwa", 35),
+  },
+ */
+  
+  {
+    type: "illust",
+    tags: ["イラスト"],
+    title: "WHITE",
+    thumbnail: "/img/siro/illust11.jpg",
+    images: numberedImages("siro", "illust1", 3),
   },
   {
     type: "illust",
     tags: ["イラスト"],
-    title: "名刺",
+    title: "白のお姫様",
     thumbnail: "/img/illust9.jpg",
   },
   {
@@ -61,13 +71,7 @@ export const works = [
     images: numberedImages("muhai4", "muhai4_", 3),
     showInAll: false,
   },
-  {
-    type: "illust",
-    tags: ["イラスト"],
-    title: "合同誌「白」",
-    thumbnail: "/img/siro/illust11.jpg",
-    images: numberedImages("siro", "illust1", 3),
-  },
+
   {
     type: "comic",
     tags: ["舞台裏"],
@@ -95,13 +99,13 @@ export const works = [
   {
     type: "illust",
     tags: ["イラスト"],
-    title: "サクカ",
+    title: "マジシャン達",
     thumbnail: "/img/illust1.jpg",
   },
   {
     type: "illust",
     tags: ["イラスト"],
-    title: "太陽初期案",
+    title: "主人公案",
     thumbnail: "/img/illust5.jpg",
   },
 ];

@@ -5,6 +5,10 @@ import { getCollection } from "astro:content";
 const posts = (await getCollection("blog")).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
+
+const tags = [...new Set(
+  posts.flatMap((post) => post.data.tags ?? [])
+)];
 ---
 
 
@@ -12,12 +16,24 @@ const posts = (await getCollection("blog")).sort(
  <div class="container">
     <section class="indent">
       <div class="memo-heading">
-        <img src="/img/icon/memo.png" alt="MEMO" />
+      <h1>MEMO</h1>  
       </div>
+
+    <nav class="memo-tags" aria-label="記事の絞り込み">
+     <button type="button" data-tag="all" class="active"> すべて </button>
+    {tags.map((tag) => ( <button type="button" data-tag={tag}> #{tag} </button>
+    ))}
+  </nav>
+
 
      {
   posts.map((post) => (
-    <a href={`/blog/${post.id}/`} class="memo-link">
+    <a
+     href={`/blog/${post.id}/`}
+     class="memo-link"
+     data-tags={(post.data.tags ?? []).join(",")}
+      >
+      
       <div class="box1">
         <h6>
           {post.data.date.toLocaleDateString("ja-JP")}
@@ -25,20 +41,99 @@ const posts = (await getCollection("blog")).sort(
 
         <h2>{post.data.title}</h2>
 
+        <div class="article-tags">
+        {(post.data.tags ?? []).map((tag) => (
+        <span class="memo-tag">#{tag}</span>
+         ))}
+        </div>
+
         <p>{post.data.description}</p>
+
       </div>
     </a>
   ))
 }
-
-
-      <ul class="pagination">
-        <li>
-          <a class="active">1</a>
-        </li>
-      </ul>
+    
+    <div class="memo-pagination"></div>
+    
+    
     </section>
   </div>
+
+<script>
+  const tagButtons = document.querySelectorAll(".memo-tags button");
+  const memoItems = Array.from(document.querySelectorAll(".memo-link"));
+  const pagination = document.querySelector(".memo-pagination");
+
+  let currentTag = "all";
+  let currentPage = 1;
+  const pageSize = 6;
+
+  function updateMemo() {
+    const filteredItems = memoItems.filter((item) => {
+      const tags = item.getAttribute("data-tags")?.split(",") ?? [];
+
+      return currentTag === "all" || tags.includes(currentTag);
+    });
+
+    const totalPages = Math.ceil(filteredItems.length / pageSize);
+
+    if (currentPage > totalPages) {
+      currentPage = Math.max(totalPages, 1);
+    }
+
+    memoItems.forEach((item) => {
+      item.toggleAttribute("hidden", true);
+    });
+
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+
+    filteredItems.slice(start, end).forEach((item) => {
+      item.toggleAttribute("hidden", false);
+    });
+
+if (pagination instanceof HTMLElement) {
+  pagination.replaceChildren();
+
+  for (let pageNumber = 1; pageNumber <= totalPages; pageNumber++) {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.textContent = String(pageNumber);
+
+    if (pageNumber === currentPage) {
+      button.classList.add("active");
+    }
+
+    button.addEventListener("click", () => {
+      currentPage = pageNumber;
+      updateMemo();
+    });
+
+    pagination.appendChild(button);
+  }
+}
+
+  }
+
+  tagButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      currentTag = button.getAttribute("data-tag") ?? "all";
+      currentPage = 1;
+
+      tagButtons.forEach((btn) => {
+        btn.classList.toggle("active", btn === button);
+      });
+
+      updateMemo();
+    });
+  });
+
+  updateMemo();
+</script>
+
+
 </Layout>
 
 
@@ -67,6 +162,62 @@ const posts = (await getCollection("blog")).sort(
 .memo-link :global(p) {
   font-size: 13px;
   line-height: 1.7;
-  margin-top: 0;
+  margin: 5px 0 0;
 }
+
+.memo-tag {
+  font-size: 11px;
+}
+
+.memo-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 40px;
+}
+
+.memo-tags button {
+  padding: 6px 12px;
+  border: 1px solid #999;
+  border-radius: 20px;
+  background: white;
+  cursor: pointer;
+  font: inherit;
+}
+
+.memo-tags button.active {
+  background: #333;
+  color: white;
+  border-color: #333;
+}
+
+.memo-link[hidden] {
+  display: none;
+}
+
+.memo-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.memo-pagination button {
+  border: 0;
+  background: none;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+}
+
+.memo-pagination button.active {
+  text-decoration: underline;
+}
+
+.article-tags {
+  display: flex;
+  gap: 6px;
+  margin: 5px 0;
+}
+
 </style>
