@@ -5,7 +5,7 @@ export const works = [
   {
     type: "illust",
     tags: ["イラスト"],
-    title: "BLUE",
+    title: "魔女のバカンス",
     thumbnail: "/img/blue2/blue21.jpg",
     images: numberedImages("blue2", "blue2", 2),
   },
